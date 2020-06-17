@@ -11,7 +11,7 @@ RSpec.describe 'PUT /api/offers/:id', type: :request do
     before do
       put "/api/offers/#{offer.id}",
            headers: requester_headers,
-           params: { activity: 'approved'}
+           params: { activity: 'accepted'}
     end
 
     it 'has 200 response' do
@@ -19,7 +19,20 @@ RSpec.describe 'PUT /api/offers/:id', type: :request do
     end
 
     it 'responds offer message' do
-      expect(response_json['message']).to eq 'Helper is set'
+      expect(response_json['message']).to eq 'offer is accepted'
+    end
+  end
+
+  describe 'requester declines offer' do
+    before do
+      put "/api/offers/#{offer.id}",
+           headers: requester_headers,
+           params: { activity: 'declined'}
+    end
+
+    it 'responds offer message' do
+      expect(response_json['message']).to eq 'offer is declined'
+    
     end
   end
 end

@@ -17,11 +17,14 @@ class Api::OffersController < ApplicationController
   def update
     offer = Offer.find(params[:id])
     if offer.update(status: params[:activity])
+      #offer_activity = activity(offer.status)
+
       offer.request.helper_id = offer.helper_id
-      render json: { offer: offer.id, message: 'offer is accepted' }
+   
+      render json: { offer: offer.id, message: "offer is #{offer.status}" }
     else
-      binding.pry
-      render json: { message: offer.errors.full_messages.join('. ') }, status: 422
+    
+      render json: { offer: offer.id, message: 'offer is accepted' }
     end
   end
 
@@ -32,7 +35,7 @@ class Api::OffersController < ApplicationController
       case offer.status
       when 'pending'
         message = 'Your offer is pending'
-      when 'approved'
+      when 'accepted'
         message = 'Your offer has been accepted'
       when 'declined'
         message = 'Your offer has been declined'
@@ -43,6 +46,20 @@ class Api::OffersController < ApplicationController
       render json: { error_message: 'Offer cannot be found' }
     end
   end
+
+
+    def activity(activity)
+        case
+          when 'pending'
+            message = 'Your offer is pending'
+          when 'accepted'
+            message = 'Your offer has been accepted'
+          when 'declined'
+            message = 'Your offer has been declined'
+        end
+    end
+
+
 
   private
 
