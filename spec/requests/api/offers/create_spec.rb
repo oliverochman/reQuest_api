@@ -2,15 +2,17 @@ RSpec.describe 'POST /offers, user can offer to help' do
   let(:requester) { create(:user, email: 'requester@mail.com') }
   let(:req_creds) { requester.create_new_auth_token }
   let(:req_headers) { { HTTP_ACCEPT: 'application/json' }.merge!(req_creds) }
+
   let(:helper) { create(:user) }
-  let(:credentials) { helper.create_new_auth_token }
-  let(:headers) { { HTTP_ACCEPT: 'application/json' }.merge!(credentials) }
+  let(:helper_credentials) { helper.create_new_auth_token }
+  let(:helper_headers) { { HTTP_ACCEPT: 'application/json' }.merge!(helper_credentials) }
+
   let(:request) { create(:request, requester: requester) }
 
   describe 'with authentication and correct params' do
     before do
       post '/api/offers',
-           headers: headers,
+           headers: helper_headers,
            params: { request_id: request.id, message: "Hi, I can help!" }
     end
 
@@ -59,11 +61,10 @@ RSpec.describe 'POST /offers, user can offer to help' do
 
   describe 'user has already offered to help' do
     before do
-      2.times do
-        post '/api/offers',
-             headers: headers,
-             params: { request_id: request.id, message: 'Hi, I can help!' }
-      end
+      create(:offer, helper: helper, request: request)
+      post '/api/offers',
+            headers: helper_headers,
+            params: { request_id: request.id, message: 'Hi, I can help!' }
     end
 
     it 'gives an error status' do

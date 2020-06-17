@@ -4,12 +4,15 @@ RSpec.describe 'GET /request, can get all requests' do
   let(:user) { create(:user) }
   let(:credentials) { user.create_new_auth_token }
   let(:headers) { { HTTP_ACCEPT: 'application/json' }.merge!(credentials) }
+
   let(:requester) { create(:user, email: 'requester@mail.com')}
   let!(:request) { 7.times { create(:request, requester: requester) } }
 
+  let!(:offer) { create(:offer, helper: user, request: Request.first) }
+
   describe 'without authentication' do
     before do
-      get '/api/requests'
+      get '/api/requests' 
     end
   
     describe 'successfully gets the requests' do
@@ -49,16 +52,12 @@ RSpec.describe 'GET /request, can get all requests' do
 
   describe 'with authentication' do
     before do
-      @request = Request.last
-      post '/api/offers',
-      headers: headers,
-      params: { request_id: @request.id, message: "Hi, I can help!" }
-
       get '/api/requests',
           headers: headers
     end
 
     it 'includes the offerable key' do
+      binding.pry
       expect(response_json['requests'][0]).to have_key 'offerable'
     end
 
