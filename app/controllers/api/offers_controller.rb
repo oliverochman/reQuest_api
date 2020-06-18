@@ -42,6 +42,17 @@ class Api::OffersController < ApplicationController
   end
 
   private
+  
+  def activity(activity)
+    case
+      when 'pending'
+        message = 'Your offer is pending'
+      when 'accepted'
+        message = 'Your offer has been accepted'
+      when 'declined'
+        message = 'Your offer has been declined'
+    end
+  end
 
   def check_and_convert_parameters
     target_request = Request.find(params[:request_id])
