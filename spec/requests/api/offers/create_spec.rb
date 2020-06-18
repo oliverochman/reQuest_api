@@ -2,9 +2,11 @@ RSpec.describe 'POST /offers, user can offer to help' do
   let(:requester) { create(:user, email: 'requester@mail.com') }
   let(:req_creds) { requester.create_new_auth_token }
   let(:req_headers) { { HTTP_ACCEPT: 'application/json' }.merge!(req_creds) }
+
   let(:helper) { create(:user) }
-  let(:credentials) { helper.create_new_auth_token }
-  let(:helper_headers) { { HTTP_ACCEPT: 'application/json' }.merge!(credentials) }
+  let(:helper_credentials) { helper.create_new_auth_token }
+  let(:helper_headers) { { HTTP_ACCEPT: 'application/json' }.merge!(helper_credentials) }
+  
   let(:request) { create(:request, requester: requester) }
 
   describe 'with authentication and correct params' do
